@@ -1,0 +1,22 @@
+composer create-project laravel/laravel project-name
+
+php artisan serve
+php artisan key:generate
+
+php artisan make:model Product -mfsc
+php artisan make:controller ProductController --resource
+php artisan make:request ProductRequest
+php artisan make:middleware AdminMiddleware
+
+php artisan migrate
+php artisan migrate:fresh --seed
+
+php artisan route:list
+
+php artisan storage:link
+
+php artisan queue:work
+
+php artisan optimize:clear
+
+php artisan test
