@@ -1,0 +1,69 @@
+git init
+-------------------------------------------------
+
+git status
+-------------------------------------------------
+
+cat .gitignore
+-------------------------------------------------
+
+Configure Git Identity
+------------------------
+git config --global user.name "sharonunnikrishnan"
+git config --global user.email "sharonunnikrishnan11@gmail.com"
+-------------------------------------------------
+
+git add .
+-------------------------------------------------
+
+git commit -m "Initial Laravel installation"
+-------------------------------------------------
+
+git log --oneline
+-------------------------------------------------
+a123456 Initial Laravel installation
+-------------------------------------------------
+
+Create GitHub Repository
+-------------------------------------------------
+chatgpt-image-generator
+Add remote: git remote add origin https://github.com/username/chatgpt-image-generator.git
+git remote -v
+
+-------------------------------------------------
+git branch -M main
+-------------------------------------------------
+
+git push -u origin main
+-------------------------------------------------
+
+Daily Workflow
+-------------------------------------------------
+git status
+git add .
+git commit -m "Add image generation form"
+git push
+
+Use Feature Branches From the Beginning
+-------------------------------------------------
+git checkout -b feature/image-generation
+or
+git switch -c feature/image-generation
+
+git branch
+-------------------------------------------------
+* feature/image-generation
+  main
+
+Commands to Practice Every Day
+-------------------------------------------------
+git status
+git add .
+git commit -m "message"
+git log --oneline
+git branch
+git switch
+git checkout
+git merge
+git pull
+git push
