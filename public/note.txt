@@ -1,0 +1,50 @@
+app/Providers/AppServiceProvider
+Schema::defaultStringLength(191);
+-----------------------------------------
+
+Schema::create('failed_jobs', function (Blueprint $table) {
+            $table->id();
+            $table->string('uuid')->unique();
+            $table->string('connection', 100);
+            $table->string('queue', 100);
+            $table->longText('payload');
+            $table->longText('exception');
+            $table->timestamp('failed_at')->useCurrent();
+
+            $table->index(['connection', 'queue', 'failed_at']);
+        });
+--------------------------------------------
+
+Listing all routes
+------------------
+php artisan r:l
+--------------------------------------------
+
+
+Optimization commands
+--------------------------------------------
+php artisan optimize
+php artisan optimize:clear
+
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan clear-compiled
+php artisan permission:cache-reset
+
+------------------------------
+/opt/alt/php84/usr/bin/php
+
+php artisan migrate:fresh --seed
+
+npm run build
+
+/opt/alt/php84/usr/bin/php artisan optimize:clear
+/opt/alt/php84/usr/bin/php artisan config:cache
+/opt/alt/php84/usr/bin/php artisan route:cache
+/opt/alt/php84/usr/bin/php artisan view:cache
+/opt/alt/php84/usr/bin/php artisan event:cache
+
+/opt/alt/php84/usr/bin/php artisan storage:link
+------------------------------
