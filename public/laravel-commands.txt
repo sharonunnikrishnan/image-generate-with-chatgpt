@@ -20,3 +20,8 @@ php artisan queue:work
 php artisan optimize:clear
 
 php artisan test
+
+
+---------------------------------------
+
+php artisan storage:link

@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\GenerateController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUser;
 use Illuminate\Support\Facades\Route;

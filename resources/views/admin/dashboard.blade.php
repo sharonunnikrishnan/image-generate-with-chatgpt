@@ -17,12 +17,12 @@
                             <!-- Box 1 -->
                             <div class="bg-white rounded-lg shadow-md border p-6 h-40 flex flex-col justify-between">
                                 <h3 class="text-lg font-semibold text-gray-800">
-                                    Generate Image
+                                    Users List
                                 </h3>
 
-                                <a href="/admin/generate"
+                                <a href="/admin/users"
                                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
-                                    Generate Image
+                                    Show All Users
                                 </a>
                             </div>
 
