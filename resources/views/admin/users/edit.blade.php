@@ -19,12 +19,6 @@
                     </a>
                 </div>
 
-                <div id="success-message" class="hidden mb-4 p-4 bg-green-100 text-green-700 rounded">
-                </div>
-
-                <div id="error-message" class="hidden mb-4 p-4 bg-red-100 text-red-700 rounded">
-                </div>
-
                 <form id="userForm" enctype="multipart/form-data" method="POST">
 
                     @csrf
@@ -227,6 +221,12 @@
 
                 </form>
 
+                <div id="success-message" class="hidden mb-4 p-4 bg-green-100 text-green-700 rounded">
+                </div>
+
+                <div id="error-message" class="hidden mb-4 p-4 bg-red-100 text-red-700 rounded">
+                </div>
+
             </div>
 
         </div>
@@ -235,41 +235,58 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <script>
-        document.getElementById('userForm').addEventListener('submit', async function(e) {
+        $('#userForm').submit(function(e) {
 
             e.preventDefault();
 
             // Clear old errors
-            document.querySelectorAll('[class*="error-"]').forEach(el => {
-                el.innerHTML = '';
-            });
+            $('[class*="error-"]').html('');
 
             let formData = new FormData(this);
 
-            const response = await fetch(
-                "{{ route('users.update', $user->id) }}", {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
+            $.ajax({
+                url: "{{ route('users.update', $user->id) }}",
+                type: "POST",
+                headers: {
+                    'Accept': 'application/json'
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+
+                success: function(response) {
+
+                    $('#success-message')
+                        .removeClass('hidden')
+                        .html(response.message);
+
+                    $('#error-message')
+                        .addClass('hidden');
+
+                },
+
+                error: function(xhr) {
+
+                    if (xhr.status == 422) {
+
+                        let errors = xhr.responseJSON.errors;
+
+                        $.each(errors, function(key, value) {
+
+                            $('.error-' + key).html(value[0]);
+
+                        });
+
+                    } else {
+
+                        $('#error-message')
+                            .removeClass('hidden')
+                            .html('Something went wrong.');
+
                     }
-                });
 
-            const data = await response.json();
-
-            if (data.errors) {
-
-                for (let field in data.errors) {
-                    document.querySelector('.error-' + field).innerHTML =
-                        data.errors[field][0];
                 }
-
-                return;
-            }
-
-            document.getElementById('success-message').classList.remove('hidden');
-            document.getElementById('success-message').innerHTML = data.message;
+            });
 
         });
     </script>

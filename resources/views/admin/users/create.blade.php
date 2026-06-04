@@ -19,12 +19,6 @@
                     </a>
                 </div>
 
-                <div id="success-message" class="hidden mb-4 p-4 bg-green-100 text-green-700 rounded">
-                </div>
-
-                <div id="error-message" class="hidden mb-4 p-4 bg-red-100 text-red-700 rounded">
-                </div>
-
                 <form id="userForm" enctype="multipart/form-data">
 
                     @csrf
@@ -197,6 +191,12 @@
 
                 </form>
 
+                <div id="success-message" class="hidden mb-4 p-4 bg-green-100 text-green-700 rounded">
+                </div>
+
+                <div id="error-message" class="hidden mb-4 p-4 bg-red-100 text-red-700 rounded">
+                </div>
+
             </div>
 
         </div>
@@ -262,6 +262,9 @@
             $.ajax({
                 url: "{{ route('users.store') }}",
                 type: "POST",
+                headers: {
+                    'Accept': 'application/json'
+                },
                 data: formData,
                 processData: false,
                 contentType: false,

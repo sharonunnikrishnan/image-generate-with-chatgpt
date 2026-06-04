@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -34,18 +33,12 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'gender' => 'required|in:male,female,other',
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 422);
-        }
 
         $photo = null;
 
@@ -54,33 +47,40 @@ class UserController extends Controller
                 ->store('upload/users', 'public');
         }
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
             'phone' => $request->phone,
             'address' => $request->address,
-            'gender' => $request->gender,
+            'gender' => $validated['gender'],
             'department' => $request->department,
             'joining_date' => $request->joining_date,
-            'role' => $request->role,
-            'status' => $request->status,
+            'role' => $request->role ?? 'user',
+            'status' => $request->status ?? '1',
             'photo' => $photo,
             'skills' => $request->skills,
         ]);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'User created successfully.'
-        ]);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'User created successfully.',
+                'user' => $user,
+            ]);
+        }
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user)
     {
-        //
+        return view('admin.users.show', compact('user'));
     }
 
     /**
@@ -88,12 +88,6 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $user = User::find($user->id);
-
-        if (!$user) {
-            // return response()->notFound();
-        }
-
         return view('admin.users.edit', compact('user'));
     }
 
@@ -102,19 +96,24 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'gender' => 'required|in:male,female,other',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $data = $request->except(['password', 'photo']);
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'gender' => $validated['gender'],
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'department' => $request->department,
+            'joining_date' => $request->joining_date,
+            'role' => $request->role ?? $user->role,
+            'status' => $request->status ?? $user->status,
+            'skills' => $request->skills,
+        ];
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -122,28 +121,32 @@ class UserController extends Controller
 
         if ($request->hasFile('photo')) {
 
-             if ($user->photo) {
+            if ($user->photo) {
                 Storage::disk('public')->delete($user->photo);
             }
 
-            $data['photo'] = $request->file('photo')->store(
-                'upload/user',
-                'public'
-            );
+            $data['photo'] = $request->file('photo')
+                ->store('upload/users', 'public');
         }
 
         $user->update($data);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'User updated successfully.'
-        ]);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'User updated successfully.',
+            ]);
+        }
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(Request $request, User $user)
     {
         if ($user->photo) {
             Storage::disk('public')->delete($user->photo);
@@ -151,9 +154,15 @@ class UserController extends Controller
 
         $user->delete();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'User deleted successfully.'
-        ]);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'User deleted successfully.',
+            ]);
+        }
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User deleted successfully.');
     }
 }
